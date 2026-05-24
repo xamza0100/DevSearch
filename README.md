@@ -33,10 +33,6 @@ The project uses a simple MVVM structure:
 - `Storage` handles local persistence with UserDefaults
 - `Utils` contains shared helper types like `ViewState`
 
-## Screens
-
-Screenshots will be added later.
-
 ## Requirements
 
 - iOS 16+
