@@ -10,6 +10,10 @@ DevSearch is a small SwiftUI app for searching GitHub users and viewing their pu
 - Add and remove users from Favorites
 - Save favorite users locally with UserDefaults
 - Loading, empty, success and error states
+- Improved profile and repository card UI
+- Pull to refresh on profile screen
+- Haptic feedback when adding/removing favorites
+- Recent search history
 
 ## Tech Stack
 
