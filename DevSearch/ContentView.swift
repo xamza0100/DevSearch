@@ -8,6 +8,8 @@ struct ContentView: View {
             VStack(spacing: 16) {
                 searchBar
 
+                searchHistoryView
+
                 content
 
                 Spacer()
@@ -51,6 +53,39 @@ struct ContentView: View {
         }
     }
 
+    private var searchHistoryView: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            if !viewModel.searchHistory.isEmpty {
+                Text("Recent searches")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(viewModel.searchHistory, id: \.self) { username in
+                            Button {
+                                Task {
+                                    await viewModel.searchFromHistory(username)
+                                }
+                            } label: {
+                                Text(username)
+                                    .font(.caption)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(
+                                        Capsule()
+                                            .fill(.secondary.opacity(0.12))
+                                    )
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
     @ViewBuilder
     private var content: some View {
         switch viewModel.state {
@@ -85,6 +120,9 @@ struct ContentView: View {
                 isFavorite: viewModel.isFavorite(user: user),
                 onFavoriteTap: {
                     viewModel.toggleFavorite(user: user)
+                },
+                onRefresh: {
+                    await viewModel.refresh()
                 }
             )
         }

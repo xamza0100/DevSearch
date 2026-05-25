@@ -6,12 +6,15 @@ final class SearchViewModel: ObservableObject {
     @Published var state: ViewState<GitHubUser> = .idle
     @Published var repos: [GitHubRepo] = []
     @Published var favorites: [FavoriteUser] = []
+    @Published var searchHistory: [String] = []
 
     private let service = GitHubService()
     private let storage = FavoritesStorage()
+    private let historyStorage = SearchHistoryStorage()
 
     init() {
         favorites = storage.getFavorites()
+        searchHistory = historyStorage.getHistory()
     }
 
     func search() async {
@@ -31,11 +34,22 @@ final class SearchViewModel: ObservableObject {
             let userRepos = try await service.fetchRepos(username: trimmedUsername)
 
             repos = userRepos
+            historyStorage.saveSearch(trimmedUsername)
+            searchHistory = historyStorage.getHistory()
             state = .success(user)
         } catch {
             repos = []
             state = .error("User not found or network connection failed")
         }
+    }
+
+    func refresh() async {
+        await search()
+    }
+
+    func searchFromHistory(_ username: String) async {
+        self.username = username
+        await search()
     }
 
     func toggleFavorite(user: GitHubUser) {
